@@ -8,7 +8,7 @@ from flask_script import Manager
 
 app = Flask(__name__)
 app.secret_key = 'AJSFGKUatsftakusftkt7t43qi'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/infolesson'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/infolesson2'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 queue = rq.Queue('infolesson-tasks', connection=Redis.from_url('redis://'))
 db = SQLAlchemy(app, session_options={"expire_on_commit": False})

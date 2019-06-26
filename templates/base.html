@@ -39,7 +39,7 @@
                     <a class="nav-link" href="#">Оценки</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('classes.classes') }}">Классы</a>
+                    <a class="nav-link" href="{{ url_for('classes.classes_list') }}">Классы</a>
                 </li>
                 {% if current_user.role >= 2 %}
                     <li class="nav-item">
