@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-6 offset-md-3">
+            <br>
+            <br>
+            <h3>Редактирование статуса</h3>
+            <form action="#" method="post">
+                 <div class="form-group">
+                    <label for="exampleFormControlSelect1">Выберите статус</label>
+                    <select class="form-control" name="status" id="exampleFormControlSelect1">
+                      <option value="0" {% if current_status == 0 %} selected {% endif %}>Ожидание...</option>
+                      <option value="1" {% if current_status == 1 %} selected {% endif %}>В процессе</option>
+                      <option value="2" {% if current_status == 2 %} selected {% endif %}>Принято</option>
+                      <option value="3" {% if current_status == 3 %} selected {% endif %}>Неправильный ответ</option>
+                      <option value="4" {% if current_status == 4 %} selected {% endif %}>Превышен лимит по времени</option>
+                      <option value="5" {% if current_status == 5 %} selected {% endif %}>Ошибка компиляции</option>
+                      <option value="6" {% if current_status == 6 %} selected {% endif %}>Ошибка сервера</option>
+                    </select>
+                 </div>
+                <input type="submit" class="btn btn-warning" value="Изменить">
+            </form>
+        </div>
+    </div>
+{% endblock %}

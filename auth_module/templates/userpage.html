@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-6 offset-md-3">
+            <br>
+            <br>
+            <h3>Информация о пользователе</h3>
+            <p>ID: {{ user.id }}</p>
+            <p>Логин: {{ user.login }}</p>
+            <p>Имя: {{ user.name }}</p>
+            <p>Фамилия: {{ user.surname }}</p>
+            <p>Роль на сайте:
+            {% if user.role == 0 %}
+                Заблокирован
+            {% elif user.role == 1 %}
+                Ученик
+            {% elif user.role == 2 %}
+                <span class="blue-text" style="color: blue;">Учитель</span>
+            {% elif user.role == 3 %}
+                <span class="green-text">Завуч</span>
+            {% elif user.role == 4 %}
+                <span class="red-text">Администратор</span>
+            {% else %}
+                Неизвестно
+            {% endif %}
+            {% if current_user.role >= 4 %}
+                - <a href="{{ url_for('auth.edit_role', user_id=user.id, redir=request.path) }}">Изменить роль</a>
+            {% endif %}
+            </p>
+            {% if current_user.role >= 4 %}
+                <p>
+                    <a href="{{ url_for('auth.reset_password', user_id=user.id) }}" class="btn btn-warning">Сбросить пароль</a>
+                </p>
+                {% if new_password %}
+                    <p>
+                        Новый пароль: {{ new_password }}
+                    </p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

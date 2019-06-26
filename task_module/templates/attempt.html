@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 offset-md-2 filled">
+            <br>
+            <br>
+            <h3>Попытка №{{ attempt.id }}</h3>
+            <br>
+            <p>Задача: <a href="{{ url_for('tasks.task', task_id=attempt.task.id) }}">{{ attempt.task.name }}</a></p>
+            <p>Отправитель: <a href="{{ url_for('auth.userpage', user_id=attempt.sender.id) }}">{{ attempt.sender.name }} {{ attempt.sender.surname }}</a></p>
+            <p>Статус:
+                {% if attempt.status == 0 %}
+                    <span >Ожидание...</span>
+                {% elif attempt.status == 1 %}
+                    <span>В процессе</span>
+                {% elif attempt.status == 2 %}
+                    <span class="green-text">Принято</span>
+                {% elif attempt.status == 3 %}
+                    <span class="red-text">Неправильный ответ</span>
+                {% elif attempt.status == 4 %}
+                    <span class="blue-text">Превышен лимит по времени</span>
+                {% elif attempt.status == 5 %}
+                    <span class="red-text">Ошибка компиляции</span>
+                {% elif attempt.status == 6 %}
+                    <span class="red-text">Ошибка сервера</span>
+                {% endif %}
+                {% if current_user.role >= 4 %}
+                - <a href="{{ url_for('tasks.edit_attempt', attempt_id=attempt.id, redir=request.path) }}">Изменить</a>
+                {% endif %}
+            </p>
+            {% if current_user.role >= 4 %}
+            <p><a href="{{ url_for('tasks.delete_attempt', attempt_id=attempt.id, redir=url_for('tasks.task', task_id=attempt.task.id)) }}">Удалить попытку</a></p>
+            {% endif %}
+            <b>Код попытки</b>
+            <pre>
+{{ attempt.code }}
+            </pre>
+            <br>
+            <b>Лог запуска</b>
+            <pre>
+{{ attempt.logs }}
+            </pre>
+        </div>
+    </div>
+{% endblock %}

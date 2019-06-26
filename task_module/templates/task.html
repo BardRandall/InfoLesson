@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="filled">
+    <div class="row">
+        <div class="col-md-6">
+            <br>
+            <br>
+            <h3>{{ task.name }}</h3>
+            <p class="gray-text small-text">ID: {{ task.id }}</p>
+            <p>Уровень: ПОМЕНЯТЬ, ДОБАВИТЬ ЕГЭ
+            {% if task.difficulty == 0 %}
+                Базовый
+            {% elif task.difficulty == 1 %}
+                Повышенный
+            {% elif task.difficulty == 2 %}
+                Высокий
+            {% elif task.difficulty == 3 %}
+                Олимпиадный
+            {% else %}
+                Не установлен
+            {% endif %}
+            </p>
+            <b>Ограничения</b>
+            <table class="limit-table">
+                <tr>
+                    <td>
+                        По времени
+                    </td>
+                    <td>
+                        {{ task.time_limit }} секунда
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        По памяти
+                    </td>
+                    <td>
+                        256 Мб
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <p>{{ task.body }}</p>
+        </div>
+        <div class="col-md-6">
+            <br>
+            <br>
+            <b>Примеры тестов</b>
+            {% if not examples_of_tests %}
+                <br>
+                <i>Примеры тестов скрыты</i>
+            {% else %}
+                <table border="1">
+                    <tr>
+                        <td>Входные данные</td>
+                        <td>Выходные данные</td>
+                    </tr>
+                    {% for etest in examples_of_tests %}
+                        <tr>
+                            <td>{{ etest[0] }}</td>
+                            <td>{{ etest[1] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <p class="gray-text small-text">Задача добавлена <a href="{{ url_for('auth.userpage', user_id=task.author.id) }}">{{ task.author.name }} {{ task.author.surname }}</a></p>
+            <h5>Сдать задачу</h5>
+            <form action="{{ url_for('tasks.task', task_id=task.id) }}" method="post" enctype="multipart/form-data">
+                <label for="select-language">Выберите язык</label>
+                <select id="select-language" class="custom-select" name="language">
+                    <option value="0" selected>C++</option>
+                    <option value="1">Python</option>
+                    <option value="2">Pascal</option>
+                </select>
+                <input type="file" name="solution" required>
+                <input type="submit" class="btn btn-warning" value="Сдать задачу">
+            </form>
+        </div>
+    </div>
+        <br>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            {% if all %}
+                <b><a href="{{ url_for('tasks.task', task_id=task.id) }}">Мои попытки</a> / Все попытки</b>
+            {% else %}
+                <b>Мои попытки{% if current_user.role > 1 %} / <a href="?all=1">Все попытки</a>{% endif %}</b>
+            {% endif %}
+            <br>
+            {% if not attempts %}
+                <h3><b>В этом задании нет попыток</b></h3>
+            {% else %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Отправитель</th>
+                        <th scope="col">Время отправки</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Язык</th>
+                        <th scope="col">Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for attempt in attempts %}
+                    <tr>
+                        <th scope="row">{{ attempt.id }}</th>
+                        <td><a href="{{ url_for('auth.userpage', user_id=attempt.sender.id) }}">{{ attempt.sender.name }} {{ attempt.sender.surname }}</a></td>
+                        <td>{{ attempt.time_created }}</td>
+                        <td>
+                            {% if attempt.status == 0 %}
+                                <span >Ожидание...</span>
+                            {% elif attempt.status == 1 %}
+                                <span>В процессе</span>
+                            {% elif attempt.status == 2 %}
+                                <span class="green-text">Принято</span>
+                            {% elif attempt.status == 3 %}
+                                <span class="red-text">Неправильный ответ</span>
+                            {% elif attempt.status == 4 %}
+                                <span class="blue-text">Превышен лимит по времени</span>
+                            {% elif attempt.status == 5 %}
+                                <span class="red-text">Ошибка компиляции</span>
+                            {% elif attempt.status == 6 %}
+                                <span class="red-text">Ошибка сервера</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if attempt.language == 0 %}
+                                C++
+                            {% elif attempt.language == 1 %}
+                                Python
+                            {% elif attempt.language == 2 %}
+                                Pascal
+                            {% else %}
+                                Неизвестный язык
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('tasks.attempt', attempt_id=attempt.id) }}">Перейти к попытке</a>
+                            {% if current_user.role >= 4 %}
+                            <a href="{{ url_for('tasks.delete_attempt', attempt_id=attempt.id, redir=request.path) }}">Удалить попытку</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+{% endblock %}
