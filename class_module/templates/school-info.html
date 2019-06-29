@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-8 offset-md-2">
+            <br>
+            <br>
+            <h3>Информация о школе "{{ school.name }}"</h3>
+            <br>
+            <p><b>Количество пользователей: </b> {{ school.persons|length }}</p>
+            <p><b>Количество классов: </b> {{ school.classes|length }}</p>
+            {% if (current_user.role >= 2 and current_user.school == school) or current_user.role >= 4 %}
+            <br>
+            <a href="{{ url_for('classes.classes_list', school_id=school.id) }}" class="btn btn-warning">Просмотреть классы</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

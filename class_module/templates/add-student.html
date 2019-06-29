@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-8 offset-md-2">
+            <br>
+            <br>
+            <h3>Добавление ученика в класс {{ userclass.name }}</h3>
+            {% if empty %}
+                <div class="alert alert-danger" role="alert">
+                  Заполните имя и фамилию ученика
+                </div>
+            {% endif %}
+            {% if auto_compare %}
+                <div class="alert alert-danger" role="alert">
+                  Пользователь с автоматически сгенерированным логином уже существует, задайте логин вручную
+                </div>
+            {% endif %}
+            {% if manual_compare %}
+                <div class="alert alert-danger" role="alert">
+                  Пользователь с заданным вами логином уже существует, задайте другой логин
+                </div>
+            {% endif %}
+            <br>
+            <form action="{{ url_for('classes.add_student', class_id=userclass.id) }}" method="post">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Имя</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" name="username" aria-describedby="emailHelp" placeholder="Иван" {% if username %} value="{{ username }}" {% endif %}>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail2">Фамилия</label>
+                <input type="text" class="form-control" id="exampleInputEmail2" name="usersurname" aria-describedby="emailHelp" placeholder="Иванов" {% if usersurname %} value="{{ usersurname }}" {% endif %}>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail3">Логин</label>
+                <input type="text" class="form-control" id="exampleInputEmail3" name="userlogin" aria-describedby="emailHelp" placeholder="ivan-ivanov" {% if userlogin %} value="{{ userlogin }}" {% endif %}>
+                <small id="emailHelp" class="form-text text-muted">Оставьте пустым для автоматической генерации</small>
+              </div>
+              <button type="submit" class="btn btn-success">Добавить</button>
+              <a href="{{ url_for('classes.class_info', class_id=userclass.id) }}" class="btn btn-light">Отменить</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

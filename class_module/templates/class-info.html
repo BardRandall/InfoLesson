@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-8 offset-md-2">
+            <br>
+            <br>
+            <h3>Класс "{{ userclass.name }}"</h3>
+            <a href="{{ url_for('classes.school_info', school_id=userclass.school.id) }}"><span class="badge badge-primary">{{ userclass.school.name }}</span></a>
+            <br>
+            <br>
+            {% if current_user.role >= 2 %}
+            <a href="{{ url_for('classes.add_student', class_id=userclass.id) }}" class="btn btn-success">Добавить учеников</a>
+            <br>
+            <br>
+            {% endif %}
+            {% if not userclass.students %}
+                <b><i>В этом классе еще нет учеников</i></b>
+            {% else %}
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Ученик</th>
+                      <th scope="col">Действия</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for student in userclass.students %}
+                        <tr>
+                          <th scope="row">{{ student.id }}</th>
+                          <td>
+                              <a href="{{ url_for('auth.userpage', user_id=student.id) }}">{{ student.name }} {{ student.surname }}</a>
+                          </td>
+                          <td>
+                              <a href="{{ url_for('auth.userpage', user_id=student.id) }}" class="btn btn-warning">Посмотреть профиль</a>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
