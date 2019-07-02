@@ -10,6 +10,7 @@
             <p>Логин: {{ user.login }}</p>
             <p>Имя: {{ user.name }}</p>
             <p>Фамилия: {{ user.surname }}</p>
+            <p>Школа: <a href="{{ url_for('classes.school_info', school_id=user.school.id) }}">{{ user.school.name }}</a></p>
             <p>Роль на сайте:
             {% if user.role == 0 %}
                 Заблокирован

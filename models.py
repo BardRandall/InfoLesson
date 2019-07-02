@@ -24,6 +24,9 @@ class User(db.Model):
     school_id = db.Column(db.Integer, db.ForeignKey('school.id'))
     school = db.relationship('School', backref=db.backref('persons', lazy=True))
 
+    userclass_id = db.Column(db.Integer, db.ForeignKey('class.id'))
+    userclass = db.relationship('Class', backref=db.backref('students', lazy=True))
+
 
 class Task(db.Model):
 

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-8 offset-md-2">
+            <br>
+            <br>
+            <h3>Вы успешно добавили нового пользователя</h3>
+            <p>Логин: {{ new_user.login }}</p>
+            <p>Пароль: {{ password }}</p>
+            <p>Имя: {{ new_user.name }}</p>
+            <p>Фамилия: {{ new_user.surname }}</p>
+            <p>
+                Класс: <a href="{{ url_for('classes.class_info', class_id=new_user.userclass.id) }}">{{ new_user.userclass.name }}</a>
+            </p>
+            <p>
+                Школа: <a href="{{ url_for('classes.school_info', school_id=new_user.school.id) }}">{{ new_user.school.name }}</a>
+            </p>
+            <br>
+            <b>Действия</b>
+            <p>
+                <a href="{{ url_for('classes.add_student', class_id=new_user.userclass.id) }}" class="btn btn-success">Добавить еще одного ученика</a>
+            </p>
+            <p>
+                <a href="{{ url_for('classes.class_info', class_id=new_user.userclass.id) }}" class="btn btn-light">Вернуться в класс</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

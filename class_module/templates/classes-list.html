@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-8 offset-md-2">
+            <br>
+            <br>
+            <h3>Список классов школы "{{ school.name }}"</h3>
+            <a href="{{ url_for('classes.create', school_id=school.id) }}" class="btn btn-success">Создать</a>
+            <br>
+            <br>
+            {% if not school.classes %}
+                <b><i>Нет классов в данной школе</i></b>
+            {% else %}
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Название</th>
+                  <th scope="col">Количество учеников</th>
+                  <th scope="col">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                 {% for class in school.classes %}
+                    <tr>
+                      <th scope="row">{{ class.id }}</th>
+                      <td><a href="{{ url_for('classes.class_info', class_id=class.id) }}">{{ class.name }}</a></td>
+                      <td>{{ class.students|length }}</td>
+                      <td>
+                          <a href="{{ url_for('classes.class_info', class_id=class.id) }}" class="btn btn-warning">Перейти</a>
+                          <a href="{{ url_for('classes.delete', class_id=class.id) }}" class="btn btn-danger">Удалить</a>
+                      </td>
+                    </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

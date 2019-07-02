@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row filled">
+        <div class="col-md-8 offset-md-2">
+            <br>
+            <br>
+            <h3>Добавление класса в школу {{ school.name }}</h3>
+            <br>
+            <form action="{{ url_for('classes.create', school_id=school.id) }}" method="post">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Название</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" name="classname" aria-describedby="emailHelp" placeholder="9А">
+              </div>
+              <button type="submit" class="btn btn-success">Добавить</button>
+              <a href="{{ url_for('classes.classes_list', school_id=school.id) }}" class="btn btn-light">Отменить</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

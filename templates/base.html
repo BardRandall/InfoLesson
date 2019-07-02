@@ -39,7 +39,7 @@
                     <a class="nav-link" href="#">Оценки</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('classes.classes') }}">Классы</a>
+                    <a class="nav-link" href="{{ url_for('classes.classes_list', school_id=current_user.school.id) }}">Классы</a>
                 </li>
                 {% if current_user.role >= 2 %}
                     <li class="nav-item">
@@ -59,7 +59,7 @@
                 {% endif %}
             </ul>
             <form class="form-inline my-2 my-lg-0">
-                <a href="#" class="mr-sm-2">{{ current_user.login }}</a>
+                <a href="{{ url_for('auth.userpage', user_id=current_user.id) }}" class="mr-sm-2">{{ current_user.login }}</a>
                 <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-success form-control mr-sm-2">Выйти</a>
             </form>
             {% endif %}
