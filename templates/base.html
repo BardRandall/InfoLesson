@@ -49,7 +49,7 @@
                         <a class="nav-link" href="{{ url_for('tasks.collection') }}">Сборник задач</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Сотрудники</a>
+                        <a class="nav-link" href="{{ url_for('staff.school_staff', school_id=current_user.school.id) }}">Сотрудники</a>
                     </li>
                 {% endif %}
                 {% if current_user.role >= 4 %}
