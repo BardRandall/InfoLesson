@@ -46,14 +46,35 @@ def class_info(class_id):
     return render('class-info.html', userclass=userclass)
 
 
-@class_module.route('/school/<int:school_id>/class/create')
+@class_module.route('/school/<int:school_id>/class/create', methods=['GET', 'POST'])
 def create(school_id):
-    return raise_error('Пока не доступно')
+    user = get_current_user()
+    school = School.query.filter_by(id=school_id).first()
+    if school is None:
+        return raise_error('Школы с id {} не существует'.format(school_id))
+    if user.role <= 1 or (user.school != school and user.role < 4):
+        return raise_error('У вас нет прав на это действие')
+    if request.method == 'GET':
+        return render('add-class.html', school=school)
+    classname = request.form['classname']
+    userclass = Class(name=classname, school=school)
+    update(userclass)
+    return redirect(url_for('classes.classes_list', school_id=school_id))
 
 
 @class_module.route('/class/delete/<int:class_id>')
 def delete(class_id):
-    return raise_error('Пока не доступно')
+    user = get_current_user()
+    if user.role <= 1:
+        return raise_error('У вас нет доступа к этому действию')
+    userclass = Class.query.filter_by(id=class_id).first()
+    if userclass is None:
+        return raise_error('Класса с id {} не существует'.format(class_id))
+    if user.school != userclass.school and user.role < 4:
+        return raise_error('Вы не имеете доступа к классам другой школы')
+    school_id = userclass.school.id
+    remove(userclass)
+    return redirect(url_for('classes.classes_list', school_id=school_id))
 
 
 @class_module.route('/class/<int:class_id>/add', methods=['GET', 'POST'])

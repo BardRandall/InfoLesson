@@ -69,6 +69,12 @@ def update(obj):
     db.session.expire_on_commit = False
 
 
+def remove(obj):
+    db.session.delete(obj)
+    db.session.commit()
+    db.session.expire_on_commit = False
+
+
 def go_redirect():
     if 'redir' in request.args:
         return redirect(request.args['redir'])

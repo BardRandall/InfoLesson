@@ -34,6 +34,9 @@
                           </td>
                           <td>
                               <a href="{{ url_for('auth.userpage', user_id=student.id) }}" class="btn btn-warning">Посмотреть профиль</a>
+                              {% if current_user.role >= 4 %}
+                                <a href="#" class="btn btn-danger">Удалить из класса - ФИЧА</a>
+                              {% endif %}
                           </td>
                         </tr>
                     {% endfor %}
