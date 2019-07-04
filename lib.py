@@ -1,6 +1,6 @@
 from flask import session, render_template, redirect, url_for, request
 from models import User
-from app import db
+from app import db, user_permissions as perms
 import random
 
 
@@ -56,7 +56,7 @@ def render(template, **kwargs):
         current_user = kwargs['current_user']
     else:
         current_user = get_current_user()
-    return render_template(template, current_user=current_user, **kwargs)
+    return render_template(template, current_user=current_user, perms=perms, **kwargs)
 
 
 def raise_error(error='Неизвестная ошибка'):
@@ -109,10 +109,34 @@ def generate_login(name, surname):
     return translate(name.lower()) + '-' + translate(surname.lower())
 
 
-def check_access(level_access=1, higher=True):
+def check_access(level_access=1, higher=True):  # soon will be deleted
     user = get_current_user()
     if user is None and level_access == 0:
         return True
     if user is None:
         return False
     return user.role >= level_access and higher or user.role <= level_access and not higher
+
+
+def check_guest_permission(permission):
+    return False
+
+
+def check_permission(permission, user=''):
+    if not user:
+        user = get_current_user()
+        if user is None:
+            return check_guest_permission(permission)
+    return user.has_permission(permission)
+
+
+def no_access():
+    return raise_error('У вас нет доступа к этой странице')
+
+
+def is_authorized():
+    return get_current_user() is not None
+
+
+def not_exists(obj, obj_id):
+    return raise_error('{} с id {} не существует в системе'.format(obj, obj_id))

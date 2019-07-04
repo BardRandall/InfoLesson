@@ -12,24 +12,16 @@
             <p>Фамилия: {{ user.surname }}</p>
             <p>Школа: <a href="{{ url_for('classes.school_info', school_id=user.school.id) }}">{{ user.school.name }}</a></p>
             <p>Роль на сайте:
-            {% if user.role == 0 %}
-                Заблокирован
-            {% elif user.role == 1 %}
-                Ученик
-            {% elif user.role == 2 %}
-                <span class="blue-text" style="color: blue;">Учитель</span>
-            {% elif user.role == 3 %}
-                <span class="green-text">Завуч</span>
-            {% elif user.role == 4 %}
-                <span class="red-text">Администратор</span>
+            {% if user.role|string in perms %}
+                <font color="{{ perms[user.role|string]['color'] }}">{{ perms[user.role|string]['name'] }}</font>
             {% else %}
                 Неизвестно
             {% endif %}
-            {% if current_user.role >= 4 %}
+            {% if current_user.has_permission('auth.edit-role') %}
                 - <a href="{{ url_for('auth.edit_role', user_id=user.id, redir=request.path) }}">Изменить роль</a>
             {% endif %}
             </p>
-            {% if current_user.role >= 4 %}
+            {% if current_user.has_permission('auth.reset-password') %}
                 <p>
                     <a href="{{ url_for('auth.reset_password', user_id=user.id) }}" class="btn btn-warning">Сбросить пароль</a>
                 </p>

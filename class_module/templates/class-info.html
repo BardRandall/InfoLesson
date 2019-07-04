@@ -9,7 +9,7 @@
             <a href="{{ url_for('classes.school_info', school_id=userclass.school.id) }}"><span class="badge badge-primary">{{ userclass.school.name }}</span></a>
             <br>
             <br>
-            {% if current_user.role >= 2 %}
+            {% if current_user %}
             <a href="{{ url_for('classes.add_student', class_id=userclass.id) }}" class="btn btn-success">Добавить учеников</a>
             <br>
             <br>

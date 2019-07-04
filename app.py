@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from redis import Redis
 import rq
+import json
 
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
@@ -14,6 +15,9 @@ queue = rq.Queue('infolesson-tasks', connection=Redis.from_url('redis://'))
 db = SQLAlchemy(app, session_options={"expire_on_commit": False})
 # db.session.expire_on_commit = False
 
+
+with open('roles.json') as f:
+    user_permissions = json.load(f)
 
 migrate = Migrate(app, db)
 manager = Manager(app)

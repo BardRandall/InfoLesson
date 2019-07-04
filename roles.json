@@ -1,0 +1,60 @@
+{
+  "0": {
+    "engname": "banned",
+    "name": "Заблокирован",
+    "color": "gray",
+    "inherit": null,
+    "permissions": [
+
+    ]
+  },
+  "1": {
+    "engname": "student",
+    "name": "Ученик",
+    "color": "black",
+    "inherit": null,
+    "permissions": [
+      "auth.login",
+      "auth.logout",
+      "auth.changepassword.self",
+      "auth.profile.all",
+      "school.profile.all",
+      "class.info.self",
+      "task.view.lessons.opened",
+      "task.attempt.self"
+    ]
+  },
+  "2": {
+    "engname": "teacher",
+    "name": "Учитель",
+    "color": "blue",
+    "inherit": "1",
+    "permissions": [
+      "class.info.school",
+      "class.create.school",
+      "class.create.all",
+      "auth.reset:school",
+      "auth.reset:class"
+    ]
+  },
+  "3": {
+    "engname": "reserve",
+    "name": "Резерв",
+    "color": "yellow",
+    "inherit": "0",
+    "permissions": [
+      "auth.edit-role",
+      "auth.reset-password",
+      "class.info.all"
+    ]
+  },
+  "4": {
+    "engname": "admin",
+    "name": "Администратор",
+    "color": "red",
+    "inherit": null,
+    "permissions": [
+      "*"
+    ]
+  }
+}

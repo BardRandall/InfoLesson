@@ -8,41 +8,46 @@ class_module = Blueprint('classes', __name__, template_folder='templates')
 
 @class_module.route('/school/<int:school_id>')
 def school_info(school_id):
-    if not check_access():
-        return go_away()
+    if not check_permission('school.profile.all'):
+        return no_access()
     school = School.query.filter_by(id=school_id).first()
     if school is None:
-        return raise_error('Школа с id {} не существует'.format(school_id))
+        return not_exists('Школа', school_id)
     return render('school-info.html', school=school)
 
 
 @class_module.route('/school/<int:school_id>/classes')
 def classes_list(school_id):
     user = get_current_user()
-    if user.role == 0:
-        return go_away()
-    if user.role == 1:
+    if not check_permission('school.classes-list', user=user):
         if user.userclass is not None:
             return redirect(url_for('classes.class_info', class_id=user.userclass.id))
-        return go_away()
+        return raise_error('Вы не привязаны ни к какому классу')
     school = School.query.filter_by(id=school_id).first()
     if school is None:
-        return raise_error('Школы с id {} не существует'.format(school_id))
+        return not_exists('Школа', school_id)
     return render('classes-list.html', school=school)
 
 
 @class_module.route('/class/<int:class_id>')
 def class_info(class_id):
     user = get_current_user()
-    if user.role == 0:
-        return go_away()
     userclass = Class.query.filter_by(id=class_id).first()
     if userclass is None:
-        return raise_error('Класс с id {} не существует'.format(class_id))
-    if user.role == 1 and user.userclass != userclass:
-        return raise_error('Вы находитесь в другом классе')
-    if user.role == 2 and user.school != userclass.school:
-        return raise_error('Этот класс не принадлежит вашей школе')
+        return not_exists('Класс', class_id)
+    if user.userclass is None:
+        if not(
+                (check_permission('class.info.school', user=user) and user.school == userclass.school)
+                or check_permission('class.info.all', user=user)
+        ):
+            return no_access()
+    else:
+        if not(
+                (check_permission('class.info.self', user=user) and user.userclass.id == class_id)
+                or (check_permission('class.info.school', user=user) and user.school == userclass.school)
+                or check_permission('class.info.all', user=user)
+        ):
+            return no_access()
     return render('class-info.html', userclass=userclass)
 
 
@@ -51,9 +56,12 @@ def create(school_id):
     user = get_current_user()
     school = School.query.filter_by(id=school_id).first()
     if school is None:
-        return raise_error('Школы с id {} не существует'.format(school_id))
-    if user.role <= 1 or (user.school != school and user.role < 4):
-        return raise_error('У вас нет прав на это действие')
+        return not_exists('Школа', school_id)
+    if not (
+            (check_permission('class.create.school', user=user) and user.school == school)
+            or check_permission('class.create.all', user=user)
+    ):
+        return no_access()
     if request.method == 'GET':
         return render('add-class.html', school=school)
     classname = request.form['classname']
@@ -65,13 +73,14 @@ def create(school_id):
 @class_module.route('/class/delete/<int:class_id>')
 def delete(class_id):
     user = get_current_user()
-    if user.role <= 1:
-        return raise_error('У вас нет доступа к этому действию')
     userclass = Class.query.filter_by(id=class_id).first()
     if userclass is None:
-        return raise_error('Класса с id {} не существует'.format(class_id))
-    if user.school != userclass.school and user.role < 4:
-        return raise_error('Вы не имеете доступа к классам другой школы')
+        return not_exists('Класс', class_id)
+    if not(
+            (check_permission('class.delete.school', user=user) and user.school == userclass.school)
+            or check_permission('class.delete.all', user=user)
+    ):
+        return no_access()
     school_id = userclass.school.id
     remove(userclass)
     return redirect(url_for('classes.classes_list', school_id=school_id))
@@ -79,14 +88,15 @@ def delete(class_id):
 
 @class_module.route('/class/<int:class_id>/add', methods=['GET', 'POST'])
 def add_student(class_id):
-    if not check_access(2):
-        return go_away()
     userclass = Class.query.filter_by(id=class_id).first()
     if userclass is None:
-        return raise_error('Класс с id {} не существует'.format(class_id))
+        return not_exists('Класс', class_id)
     user = get_current_user()
-    if not (user.school == userclass.school or user.role >= 4):
-        return raise_error('У вас нет доступа к этому действию')
+    if not(
+            (check_permission('class.add-student.school', user=user) and user.school == userclass.school)
+            or check_permission('class.add-student.all', user=user)
+    ):
+        no_access()
     if request.method == 'GET':
         return render('add-student.html', userclass=userclass)
     else:

@@ -1,4 +1,4 @@
-from app import db
+from app import db, user_permissions as perms
 
 
 class School(db.Model):
@@ -26,6 +26,22 @@ class User(db.Model):
 
     userclass_id = db.Column(db.Integer, db.ForeignKey('class.id'))
     userclass = db.relationship('Class', backref=db.backref('students', lazy=True))
+
+    def _role_has_permission(self, role_obj, perm):
+        if perm in role_obj['permissions']:
+            return True
+        if '*' in role_obj['permissions']:
+            return True
+        if role_obj['inherit'] is None or role_obj['inherit'] not in perms:
+            return False
+        return self._role_has_permission(perms[role_obj['inherit']], perm)
+
+    def has_permission(self, permission):
+        if str(self.role) not in perms:
+            print('No such role {} with user id {}'.format(self.role, self.id))
+            return False
+        role_obj = perms[str(self.role)]
+        return self._role_has_permission(role_obj, permission)
 
 
 class Task(db.Model):
