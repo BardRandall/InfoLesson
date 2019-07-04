@@ -33,7 +33,7 @@ def collection():  # TODO переделать
             tasks = Task.query.filter_by(**params).all()
         else:
             tasks1 = Task.query.filter_by(**params, published=1).all()
-            tasks2 = Task.query.filter_by(**params, published=0, user=get_current_user()).all()
+            tasks2 = Task.query.filter_by(**params, published=0, author=get_current_user()).all()
             tasks = tasks1 + tasks2
     else:
         if check_access(4):
